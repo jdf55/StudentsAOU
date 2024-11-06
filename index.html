@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روابط المحاضرات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f3f3;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .lecture-link {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+        }
+        .lecture-link a {
+            text-decoration: none;
+            color: #2e7d32;
+        }
+        /* تصميم نموذج تسجيل الدخول وإنشاء الحساب */
+        #login-form, #register-form {
+            display: none;
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 80%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="button"] {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .toggle-link {
+            color: #4CAF50;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>روابط المحاضرات اليومية</h1>
+
+        <!-- نموذج إنشاء حساب جديد -->
+        <div id="register-form">
+            <h2>إنشاء حساب</h2>
+            <input type="text" id="register-email" placeholder="البريد الإلكتروني الجامعي" required>
+            <input type="password" id="register-password" placeholder="كلمة المرور" required>
+            <input type="button" value="إنشاء حساب" onclick="register()">
+            <p>هل لديك حساب؟ <span class="toggle-link" onclick="toggleForms('login')">تسجيل الدخول</span></p>
+        </div>
+
+        <!-- نموذج تسجيل الدخول -->
+        <div id="login-form">
+            <h2>تسجيل الدخول</h2>
+            <input type="text" id="login-email" placeholder="البريد الإلكتروني الجامعي" required>
+            <input type="password" id="login-password" placeholder="كلمة المرور" required>
+            <input type="button" value="دخول" onclick="login()">
+            <p>نسيت كلمة المرور؟ <span class="toggle-link" onclick="resetPassword()">استعادة كلمة المرور</span></p>
+            <p>لا تملك حسابًا؟ <span class="toggle-link" onclick="toggleForms('register')">إنشاء حساب</span></p>
+        </div>
+
+        <!-- قائمة روابط المحاضرات -->
+        <div id="lectures-list" style="display: none;">
+            <!-- سيتم إضافة روابط المحاضرات هنا بواسطة JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // بيانات الروابط اليومية
+        const lectures = [
+            { date: '2024-11-03', link: 'https://arabou-my.sharepoint.com/:v:/r/personal/pt668_ie_arabou_edu_sa/Documents/Recordings/EL099R%20(4101%20%264201)-20241103_140837-%D8%AA%D8%B3%D8%AC%D9%8A%D9%84%20%D8%A7%D9%84%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9.mp4?csf=1&web=1&e=pjxaC2' },
+            { date: '2024-11-04', link: 'https://arabou-my.sharepoint.com/:v:/r/personal/pt668_ie_arabou_edu_sa/Documents/Recordings/EL099R%20(4101%20%264201)-20241104_140115-%D8%AA%D8%B3%D8%AC%D9%8A%D9%84%20%D8%A7%D9%84%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%201.mp4?csf=1&web=1&e=izFqdE' }
+        ];
+
+        // التبديل بين نماذج تسجيل الدخول وإنشاء الحساب
+        function toggleForms(formType) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
+            if (formType === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        // دالة لإنشاء حساب جديد مع التحقق من البريد الإلكتروني
+        function register() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            // التحقق من أن البريد الإلكتروني يحتوي على النطاق المطلوب
+            if (!email.endsWith('@aou.edu.sa')) {
+                alert('يجب استخدام بريد إلكتروني جامعي ينتهي بـ @aou.edu.sa');
+                return;
+            }
+
+            if (email && password) {
+                // تخزين بيانات المستخدم في Local Storage
+                localStorage.setItem(email, password);
+                alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+                toggleForms('login'); // الانتقال إلى نموذج تسجيل الدخول
+            } else {
+                alert('يرجى إدخال البريد الإلكتروني وكلمة المرور.');
+            }
+        }
+
+        // دالة لتسجيل الدخول
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            // التحقق من بيانات المستخدم المخزنة
+            const storedPassword = localStorage.getItem(email);
+
+            if (storedPassword === password) {
+                // إخفاء نموذج تسجيل الدخول وعرض الروابط
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('lectures-list').style.display = 'block';
+                displayLectures();
+            } else {
+                alert('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+            }
+        }
+
+        // دالة لإضافة الروابط إلى الصفحة
+        function displayLectures() {
+            const lecturesList = document.getElementById('lectures-list');
+            lecturesList.innerHTML = ''; // تنظيف القائمة قبل الإضافة
+
+            lectures.forEach(lecture => {
+                const lectureDiv = document.createElement('div');
+                lectureDiv.className = 'lecture-link';
+                lectureDiv.innerHTML = `
+                    <strong>${lecture.date}:</strong> 
+                    <a href="${lecture.link}" target="_blank">رابط المحاضرة</a>
+                `;
+                lecturesList.appendChild(lectureDiv);
+            });
+        }
+
+        // دالة "نسيت كلمة المرور"
+        function resetPassword() {
+            const email = prompt("أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور:");
+            if (email && localStorage.getItem(email)) {
+                const newPassword = prompt("أدخل كلمة مرور جديدة:");
+                if (newPassword) {
+                    localStorage.setItem(email, newPassword);
+                    alert("تمت إعادة تعيين كلمة المرور بنجاح!");
+                }
+            } else {
+                alert("البريد الإلكتروني غير مسجل.");
+            }
+        }
+
+        // عرض نموذج إنشاء الحساب عند تحميل الصفحة
+        toggleForms('register'); // عرض نموذج إنشاء الحساب افتراضيًا
+    </script>
+</body>
+</html>  
