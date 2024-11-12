@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روابط المحاضرات</title>
+    <style>
+
+        
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f3f3;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .lecture-link {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .lecture-link a {
+            text-decoration: none;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .lecture-link:hover {
+            background-color: #c8e6c9;
+        }
+        #login-form, #register-form, #reset-password-form {
+            display: none;
+            margin-top: 20px;
+            transition: opacity 0.3s ease;
+        }
+        .form-group {
+            position: relative;
+            width: 80%;
+            margin: 8px auto;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #4CAF50;
+        }
+        input[type="button"], input[type="submit"], #logout-button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        input[type="button"]:hover, input[type="submit"]:hover, #logout-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .toggle-link {
+            color: #4CAF50;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .alert {
+            display: none;
+            opacity: 0;
+            margin: 15px 0;
+            padding: 10px;
+            color: #fff;
+            border-radius: 4px;
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
+        .alert-success { background-color: #4CAF50; }
+        .alert-error { background-color: #f44336; }
+        .alert.show {
+            display: block;
+            opacity: 1;
+        }
+        #logout-button {
+            display: none;
+            padding: 8px 16px;
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #logout-button:hover {
+            background-color: #e53935;
+        }
+    </style>
+
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h1>روابط المحاضرات اليومية</h1>
+
+        <!-- منطقة التنبيهات -->
+        <div id="alert" class="alert"></div>
+
+        <!-- زر تسجيل الخروج -->
+        <button id="logout-button" onclick="logout()">تسجيل الخروج</button>
+
+        <!-- نموذج تسجيل الدخول -->
+        <div id="login-form">
+            <h2>تسجيل الدخول</h2>
+            <div class="form-group">
+                <input type="text" id="login-email" placeholder="البريد الإلكتروني الجامعي" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="login-password" placeholder="كلمة المرور" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('login-password')">👁️</span>
+            </div>
+            <div>
+                <input type="checkbox" id="remember-me"> تذكرني
+            </div>
+            <input type="button" value="دخول" onclick="login()">
+            <p>نسيت كلمة المرور؟ <span class="toggle-link" onclick="toggleForms('reset-password')">استعادة كلمة المرور</span></p>
+            <p>لا تملك حسابًا؟ <span class="toggle-link" onclick="toggleForms('register')">إنشاء حساب</span></p>
+        </div>
+
+        <!-- نموذج إنشاء حساب جديد -->
+        <div id="register-form">
+            <h2>إنشاء حساب</h2>
+            <div class="form-group">
+                <input type="text" id="register-email" placeholder="البريد الإلكتروني الجامعي" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="register-password" placeholder="كلمة المرور" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('register-password')">👁️</span>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirm-password" placeholder="تأكيد كلمة المرور" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">👁️</span>
+            </div>
+            <input type="button" value="إنشاء حساب" onclick="register()">
+            <p>هل لديك حساب؟ <span class="toggle-link" onclick="toggleForms('login')">تسجيل الدخول</span></p>
+        </div>
+
+        <!-- نموذج استعادة كلمة المرور -->
+        <div id="reset-password-form">
+            <h2>استعادة كلمة المرور</h2>
+            <div class="form-group">
+                <input type="text" id="reset-email" placeholder="البريد الإلكتروني الجامعي" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="new-password" placeholder="كلمة المرور الجديدة" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('new-password')">👁️</span>
+            </div>
+            <input type="button" value="تحديث كلمة المرور" onclick="resetPassword()">
+            <p>هل تذكرت كلمة المرور؟ <span class="toggle-link" onclick="toggleForms('login')">تسجيل الدخول</span></p>
+        </div>
+
+        <!-- قائمة روابط المحاضرات -->
+        <div id="lectures-list" style="display: none;">
+            <!-- سيتم إضافة روابط المحاضرات هنا بواسطة JavaScript -->
+        </div>
+    </div>
+
+    <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyATcY4UpuT-QrpR4hb6jTpDkrzKSVcuwZ8",
+        authDomain: "lecture-links-28790.firebaseapp.com",
+        projectId: "lecture-links-28790",
+        storageBucket: "lecture-links-28790.firebasestorage.app",
+        messagingSenderId: "72613115072",
+        appId: "1:72613115072:web:f56677b34171a9822e2925",
+        measurementId: "G-KC94N27Z34"
+      };
+      </script>
+    <script>
+        const lectures = [
+            { date: '2024-11-03', link: 'https://arabou-my.sharepoint.com/.../lecture1.mp4' },
+            { date: '2024-11-04', link: 'https://arabou-my.sharepoint.com/.../lecture2.mp4' },
+            { date: '2024-11-05', link: 'https://arabou-my.sharepoint.com/:v:/r/personal/pt668_ie_arabou_edu_sa/Documents/Recordings/EL099R%20(4101%20%264201)-20241105_140239-%D8%AA%D8%B3%D8%AC%D9%8A%D9%84%20%D8%A7%D9%84%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9.mp4?csf=1&web=1&e=X9eWZ6' },
+            { date: '2024-11-06', link: 'https://arabou-my.sharepoint.com/:v:/r/personal/pt668_ie_arabou_edu_sa/Documents/Recordings/EL099R%20(4101%20%264201)-20241106_140057-%D8%AA%D8%B3%D8%AC%D9%8A%D9%84%20%D8%A7%D9%84%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9.mp4?csf=1&web=1&e=4naNNQ' },
+            { date: '2024-11-07', link: 'https://arabou-my.sharepoint.com/:v:/r/personal/pt668_ie_arabou_edu_sa/Documents/Recordings/EL099R%20(4101%20%264201)-20241107_140113-%D8%AA%D8%B3%D8%AC%D9%8A%D9%84%20%D8%A7%D9%84%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%201.mp4?csf=1&web=1&e=GmxLr7' }
+        ];
+
+        function toggleForms(formType) {
+            document.getElementById('login-form').style.display = formType === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = formType === 'register' ? 'block' : 'none';
+            document.getElementById('reset-password-form').style.display = formType === 'reset-password' ? 'block' : 'none';
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertBox = document.getElementById('alert');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3000);
+        }
+
+        function encryptPassword(password) {
+            return btoa(password);
+        }
+
+        function register() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!email.endsWith('@aou.edu.sa')) {
+                showAlert('يجب استخدام بريد إلكتروني جامعي ينتهي بـ @aou.edu.sa', 'error');
+                return;
+            }
+
+            if (localStorage.getItem(email)) {
+                showAlert('هذا البريد الإلكتروني مسجل مسبقًا.', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('كلمتا المرور غير متطابقتين.', 'error');
+                return;
+            }
+
+            const encryptedPassword = encryptPassword(password);
+            localStorage.setItem(email, encryptedPassword);
+            showAlert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+            toggleForms('login');
+        }
+
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const storedPassword = localStorage.getItem(email);
+
+            if (storedPassword === encryptPassword(password)) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('lectures-list').style.display = 'block';
+                document.getElementById('logout-button').style.display = 'block';
+                localStorage.setItem('isLoggedIn', 'true');
+                showAlert('تم تسجيل الدخول بنجاح!');
+                displayLectures();
+            } else {
+                showAlert('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
+            }
+        }
+
+        function resetPassword() {
+            const email = document.getElementById('reset-email').value;
+            const newPassword = document.getElementById('new-password').value;
+
+            if (!localStorage.getItem(email)) {
+                showAlert('البريد الإلكتروني غير مسجل.', 'error');
+                return;
+            }
+
+            const encryptedPassword = encryptPassword(newPassword);
+            localStorage.setItem(email, encryptedPassword);
+            showAlert('تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.');
+            toggleForms('login');
+        }
+
+        function displayLectures() {
+            const lecturesList = document.getElementById('lectures-list');
+            lecturesList.innerHTML = '';
+            lectures.forEach(lecture => {
+                const lectureDiv = document.createElement('div');
+                lectureDiv.className = 'lecture-link';
+                lectureDiv.innerHTML = `
+                    <strong>${lecture.date}:</strong> 
+                    <a href="${lecture.link}" target="_blank">رابط المحاضرة</a>
+                `;
+                lecturesList.appendChild(lectureDiv);
+            });
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const activeForm = document.querySelector('div[id$="-form"]:not([style*="display: none"])');
+                if (activeForm && activeForm.id === 'login-form') {
+                    login();
+                } else if (activeForm && activeForm.id === 'register-form') {
+                    register();
+                } else if (activeForm && activeForm.id === 'reset-password-form') {
+                    resetPassword();
+                }
+            }
+        });
+
+        window.onload = function() {
+            toggleForms('login');
+        };
+    </script>
+</body>
+</html>
