@@ -1,0 +1,29 @@
+# ملفات النظام
+*.log
+*.lock
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+desktop.ini
+
+# مجلدات التطوير
+.vscode/
+.idea/
+node_modules/
+.cache/
+.gradle/
+.android/
+.eclipse/
+.p2/
+.redhat/
+.mobisystems/
+AppData/
+OneDrive*/
+*.ini
+
+# ملفات أخرى
+NTUSER.DAT*
+package-lock.json
+package.json
+    

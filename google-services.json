@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "103026136779",
+    "project_id": "yousef-80958",
+    "storage_bucket": "yousef-80958.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103026136779:android:1ae7b06d96a261c68a2d4e",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103026136779-blg7u5mu7vtie7naahgbe0noipqoklge.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFKhhuP_dVoflbLZL88oBnh-vt0vUZNC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103026136779-blg7u5mu7vtie7naahgbe0noipqoklge.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
